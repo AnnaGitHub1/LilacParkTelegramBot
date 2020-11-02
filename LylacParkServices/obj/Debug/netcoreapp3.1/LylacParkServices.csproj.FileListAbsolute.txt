@@ -1,0 +1,5 @@
+C:\Users\pain-\source\repos\LilacParkTelegrammBot\LylacParkServices\bin\Debug\netcoreapp3.1\LylacParkServices.deps.json
+C:\Users\pain-\source\repos\LilacParkTelegrammBot\LylacParkServices\bin\Debug\netcoreapp3.1\LylacParkServices.dll
+C:\Users\pain-\source\repos\LilacParkTelegrammBot\LylacParkServices\obj\Debug\netcoreapp3.1\LylacParkServices.csprojAssemblyReference.cache
+C:\Users\pain-\source\repos\LilacParkTelegrammBot\LylacParkServices\obj\Debug\netcoreapp3.1\LylacParkServices.AssemblyInfoInputs.cache
+C:\Users\pain-\source\repos\LilacParkTelegrammBot\LylacParkServices\obj\Debug\netcoreapp3.1\LylacParkServices.AssemblyInfo.cs
