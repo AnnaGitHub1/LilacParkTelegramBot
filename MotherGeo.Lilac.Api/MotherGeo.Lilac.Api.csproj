@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <Prefer32bit>true</Prefer32bit>
+    <Prefer32bit>false</Prefer32bit>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
