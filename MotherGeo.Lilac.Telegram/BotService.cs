@@ -1,11 +1,8 @@
-﻿using LylacParkServices.Interfaces;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Extensions.Options;
+using MotherGeo.Lilac.Telegram.Interfaces;
 using Telegram.Bot;
 
-namespace LylacParkServices
+namespace MotherGeo.Lilac.Telegram
 {
     public class BotService : IBotService
     {

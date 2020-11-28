@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using LylacParkServices.Interfaces;
+using MotherGeo.Lilac.Telegram.Interfaces;
 using TelegramBot;
 
-namespace LilacParkTelegramBot.Controllers
+namespace MotherGeo.Lilac.Telegram.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -16,6 +16,14 @@ namespace LilacParkTelegramBot.Controllers
             _updateService = updateService;
         }
 
+        [Route("")]
+        [HttpGet]
+        public IActionResult GetVersion()
+        {
+            return Ok("Version 1.0");
+        }
+
+        [Route("")]
         [HttpPost]
         public async Task<IActionResult> EchoMessages([FromBody]Update update)
         {

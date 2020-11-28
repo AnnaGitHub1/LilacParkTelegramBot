@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace LilacParkTelegramBot
+namespace MotherGeo.Lilac.Telegram
 {
     public class Program
     {

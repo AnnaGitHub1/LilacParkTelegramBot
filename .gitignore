@@ -5,3 +5,8 @@ LylacParkServices/obj/
 .idea/
 LilacParkTelegramBot/bin/
 LilacParkTelegramBot/obj/
+MotherGeo.Lilac.Api/bin/
+MotherGeo.Lilac.Api/obj/
+MotherGeo.Lilac.Telegram/bin/
+MotherGeo.Lilac.Telegram/obj/
+MotherGeo.Lilac.Api/GPUCache/
