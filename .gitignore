@@ -1,3 +1,5 @@
-/LilacParkTelegrammBot/bin*
-
-/LylacParkServices/bin*
+/LilacParkTelegrammBot/bin/
+/LylacParkServices/bin/
+LilacParkTelegrammBot/obj/
+LylacParkServices/obj/
+.idea/
