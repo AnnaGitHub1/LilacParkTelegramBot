@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LylacParkServices;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LylacParkServices.Interfaces;
 using TelegramBot;
 
-namespace LilacParkTelegrammBot.Controllers
+namespace LilacParkTelegramBot.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

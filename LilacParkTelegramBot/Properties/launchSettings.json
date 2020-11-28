@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "LilacParkTelegrammBot": {
+    "LilacParkTelegramBot": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",

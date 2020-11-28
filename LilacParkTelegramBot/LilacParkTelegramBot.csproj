@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>bb400019-0cab-4c5f-b2f2-2cfdd56af3e6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RootNamespace>LilacParkTelegrammBot</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
