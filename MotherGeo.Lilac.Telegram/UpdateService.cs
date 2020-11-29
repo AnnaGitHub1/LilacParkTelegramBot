@@ -1,18 +1,23 @@
 ﻿using CefSharp.OffScreen;
 using System;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using CefSharp;
 using Microsoft.Extensions.Options;
 using MotherGeo.Lilac.Telegram.Interfaces;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
-using TelegramBot;
+using Update = TelegramBot.Update;
 
 namespace MotherGeo.Lilac.Telegram
 {
     public class UpdateService : IUpdateService
     {
-        const string testUrl = "https://open.ivideon.com/embed/v2/?server=100-gHmJOwS7jHDJLZm8nXlT3w&camera=458752&width=1280&height=720&lang=ru&ap=&fs=&noibw=";
+        const string testUrl = "https://open.ivideon.com/embed/v2/?server=100-gHmJOwS7jHDJLZm8nXlT3w&camera=458752&width=1280&height=720&lang=ru&fs=&noibw=";
 
         private readonly IBotService _botService;
         private readonly BotConfiguration _settings;
@@ -43,85 +48,48 @@ namespace MotherGeo.Lilac.Telegram
             cefInitialized = true;
         }
 
-        public async Task EchoAsync(Update update)
+        private static DateTime _lastRequest = new DateTime(); 
+
+        public async Task EchoAsync(Update update, CancellationToken cancellationToken)
         {
-            
             var browser = new ChromiumWebBrowser(testUrl, new BrowserSettings
             {
                 FileAccessFromFileUrls = CefState.Enabled,
                 UniversalAccessFromFileUrls = CefState.Enabled,
                 Javascript = CefState.Enabled,
-                
+                ApplicationCache = CefState.Disabled
             });
             
             while (browser.IsLoading)
             {
-                await Task.Delay(100);
+                await Task.Delay(100, cancellationToken);
             }
-            
-            //browser.Load("https://afi-park.ru/");
-            await Task.Delay(7000);
-            browser.ExecuteScriptAsync("$('div.b-embed-btn-play').click()");
-            await Task.Delay(3000);
-            await saveScreenShot(browser);
-            
-            browser.ExecuteScriptAsync("$('button.iv-btn').click()");
-            await Task.Delay(3000);
-            await saveScreenShot(browser);
-            
-            browser.ExecuteScriptAsync("$('button.iv-ui-btn__m-theme-contour').click()");
-            await Task.Delay(3000);
-            await saveScreenShot(browser);
-            
-            browser.ExecuteScriptAsync("$('div.b-embed-btn-play').click()");
-            await Task.Delay(3000);
-            await saveScreenShot(browser);
-            
-           /* browser.ExecuteScriptAsync("$(\"[data-targ='webcam']\").click()");
-            await Task.Delay(5000);
-            
-            await Task.Delay(5000);
-            browser.ExecuteScriptAsync("$('button.iv-camera-video-view-fullscreen-button').click()");
-            await Task.Delay(7000);*/
-            //browser.Reload(true);
-            //await Task.Delay(7000);
-            
-            var s = await browser.GetSourceAsync();
-            
-           /* await using (var stream = File.Open(screenshotPath, FileMode.Open))
+
+            while (!browser.CanExecuteJavascriptInMainFrame)
             {
-                var photo = new InputOnlineFile(stream);
-                var send = await _botService.Client.SendPhotoAsync(update.Message.Chat.ID, photo, $"Фото ЖК на {DateTime.Now:yyyy-MM-dd HH:mm}");
+                await Task.Delay(100, cancellationToken);
             }
 
-             DeleteScreenshot(screenshotPath);*/
+            if (DateTime.Now - _lastRequest > TimeSpan.FromSeconds(60))
+            {
+                await Task.Delay(5000, cancellationToken);
+                
+            }
+            await Task.Delay(500, cancellationToken);
+            _lastRequest = DateTime.Now;
 
-        }
-        
-        private static int _k = 0;
+            browser.ExecuteScriptAsync("$('.b-embed-logo').remove()");
+            await Task.Delay(100, cancellationToken);
+            browser.ExecuteScriptAsync("$('.b-embed-btn-play-wrapper').remove()");
+            await Task.Delay(100, cancellationToken);
 
-        private async Task saveScreenShot(ChromiumWebBrowser browser)
-        {
             var screenshot = await browser.ScreenshotAsync();
-
-            var guid = Guid.NewGuid();
-
-            var screenshotPath = Path.Combine(_settings.DataPath, $"{_k++}-screenshot_{guid}.png");
-
-            screenshot.Save(screenshotPath);
-
-            screenshot.Dispose();
-            //var s = await browser.GetSourceAsync();
-        }
-
-        private static void DeleteScreenshot(string screenPath)
-        {
-            var fileInf = new FileInfo(screenPath);
-
-            if (fileInf.Exists)
-            {
-                fileInf.Delete();
-            }
+            var memoryStream = new MemoryStream();
+            screenshot.Save(memoryStream, ImageFormat.Png);
+            memoryStream.Seek(0, SeekOrigin.Begin); 
+            var photo = new InputOnlineFile(memoryStream);
+            await _botService.Client.SendPhotoAsync(update.Message.Chat.ID, photo, cancellationToken: cancellationToken, caption: $"{DateTime.Now:F}");
+            
         }
     }
 }

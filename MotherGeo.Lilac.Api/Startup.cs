@@ -25,6 +25,7 @@ namespace MotherGeo.Lilac.Telegram
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
 
             services.AddControllers();
+            services.AddLogging();
             
             services.AddSwaggerGen();
         }
