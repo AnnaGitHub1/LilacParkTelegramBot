@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,9 +30,14 @@ namespace MotherGeo.Lilac.Telegram.Controllers
 
         [Route("")]
         [HttpPost]
-        public async Task<IActionResult> EchoMessages([FromBody]Update update, CancellationToken cancellationToken)
+        public async Task<IActionResult> EchoMessages([FromBody] Update update, CancellationToken cancellationToken)
         {
             _logger.LogDebug(Newtonsoft.Json.JsonConvert.SerializeObject(update));
+            if (update?.Message == null)
+            {
+                return Ok();
+            }
+
             await _updateService.EchoAsync(update, cancellationToken);
             return Ok();
         }

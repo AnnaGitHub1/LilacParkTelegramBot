@@ -52,6 +52,11 @@ namespace MotherGeo.Lilac.Telegram
 
         public async Task EchoAsync(Update update, CancellationToken cancellationToken)
         {
+            if (!update.Message.Text.Contains("camera1"))
+            {
+                return;
+            }
+            
             var browser = new ChromiumWebBrowser(testUrl, new BrowserSettings
             {
                 FileAccessFromFileUrls = CefState.Enabled,
@@ -62,19 +67,14 @@ namespace MotherGeo.Lilac.Telegram
             
             while (browser.IsLoading)
             {
-                await Task.Delay(100, cancellationToken);
+                await Task.Delay(500, cancellationToken);
             }
 
             while (!browser.CanExecuteJavascriptInMainFrame)
             {
-                await Task.Delay(100, cancellationToken);
+                await Task.Delay(500, cancellationToken);
             }
 
-            if (DateTime.Now - _lastRequest > TimeSpan.FromSeconds(60))
-            {
-                await Task.Delay(5000, cancellationToken);
-                
-            }
             await Task.Delay(500, cancellationToken);
             _lastRequest = DateTime.Now;
 
@@ -84,12 +84,15 @@ namespace MotherGeo.Lilac.Telegram
             await Task.Delay(100, cancellationToken);
 
             var screenshot = await browser.ScreenshotAsync();
+            if (null == screenshot)
+            {
+                return;
+            }
             var memoryStream = new MemoryStream();
             screenshot.Save(memoryStream, ImageFormat.Png);
             memoryStream.Seek(0, SeekOrigin.Begin); 
             var photo = new InputOnlineFile(memoryStream);
             await _botService.Client.SendPhotoAsync(update.Message.Chat.ID, photo, cancellationToken: cancellationToken, caption: $"{DateTime.Now:F}");
-            
         }
     }
 }
