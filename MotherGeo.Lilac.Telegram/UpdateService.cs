@@ -14,8 +14,10 @@ namespace MotherGeo.Lilac.Telegram
 {
     public class UpdateService : IUpdateService
     {
-        const string testUrl = "https://open.ivideon.com/embed/v2/?server=100-gHmJOwS7jHDJLZm8nXlT3w&camera=458752&width=1280&height=720&lang=ru&fs=&noibw=";
-
+        private const string camera1Url = "https://open.ivideon.com/embed/v2/?server=100-gHmJOwS7jHDJLZm8nXlT3w&camera=458752&width=1280&height=720&lang=ru&fs=&noibw=";
+        private const string camera7Url =
+            "https://open.ivideon.com/embed/v2/?server=100-gHmJOwS7jHDJLZm8nXlT3w&camera=524288&width=1920&height=1080&lang=ru&fs=&noibw=";
+        
         private readonly IBotService _botService;
         private readonly BotConfiguration _settings;
 
@@ -47,12 +49,14 @@ namespace MotherGeo.Lilac.Telegram
 
         public async Task EchoAsync(RequestUpdate update, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(update.Message.Text) || !update.Message.Text.Contains("camera1"))
+            if (string.IsNullOrEmpty(update.Message.Text) || !(update.Message.Text.Contains("camera1") || update.Message.Text.Contains("camera7")))
             {
                 return;
             }
+
+            var url = update.Message.Text.Contains("camera1") ? camera1Url : camera7Url;
             
-            var browser = new ChromiumWebBrowser(testUrl, new BrowserSettings
+            var browser = new ChromiumWebBrowser(url, new BrowserSettings
             {
                 FileAccessFromFileUrls = CefState.Enabled,
                 UniversalAccessFromFileUrls = CefState.Enabled,
