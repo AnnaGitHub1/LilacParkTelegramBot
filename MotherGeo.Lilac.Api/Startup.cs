@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MotherGeo.Lilac.Telegram.Helpers;
 using MotherGeo.Lilac.Telegram.Interfaces;
 
 namespace MotherGeo.Lilac.Telegram
@@ -24,6 +26,11 @@ namespace MotherGeo.Lilac.Telegram
 
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
 
+            services.Configure<ApiBehaviorOptions>(opt =>
+            {
+                opt.SuppressModelStateInvalidFilter = true;
+            });            
+            
             services.AddControllers();
             services.AddLogging();
             
@@ -50,6 +57,9 @@ namespace MotherGeo.Lilac.Telegram
             app.UseRouting();
 
             app.UseAuthorization();
+            
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
 
             app.UseEndpoints(endpoints =>
             {

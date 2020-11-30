@@ -1,9 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using MotherGeo.Lilac.Telegram.Interfaces;
-using TelegramBot;
+using MotherGeo.Lilac.Telegram.Model;
 
 namespace MotherGeo.Lilac.Telegram.Controllers
 {
@@ -12,13 +11,9 @@ namespace MotherGeo.Lilac.Telegram.Controllers
     public class UpdateController : ControllerBase
     {
         private readonly IUpdateService _updateService;
-        private readonly ILogger<Update> _logger;
-
-
-        public UpdateController(IUpdateService updateService, ILogger<Update> logger)
+        public UpdateController(IUpdateService updateService)
         {
             _updateService = updateService;
-            _logger = logger;
         }
 
         [Route("")]
@@ -30,9 +25,8 @@ namespace MotherGeo.Lilac.Telegram.Controllers
 
         [Route("")]
         [HttpPost]
-        public async Task<IActionResult> EchoMessages([FromBody] Update update, CancellationToken cancellationToken)
+        public async Task<IActionResult> EchoMessages(CancellationToken cancellationToken, [FromBody] RequestUpdate update = null)
         {
-            _logger.LogDebug(Newtonsoft.Json.JsonConvert.SerializeObject(update));
             if (update?.Message == null)
             {
                 return Ok();

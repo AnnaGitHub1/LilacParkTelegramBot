@@ -2,16 +2,13 @@
 using System;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using CefSharp;
 using Microsoft.Extensions.Options;
 using MotherGeo.Lilac.Telegram.Interfaces;
-using Telegram.Bot.Types;
+using MotherGeo.Lilac.Telegram.Model;
 using Telegram.Bot.Types.InputFiles;
-using Update = TelegramBot.Update;
 
 namespace MotherGeo.Lilac.Telegram
 {
@@ -48,11 +45,9 @@ namespace MotherGeo.Lilac.Telegram
             cefInitialized = true;
         }
 
-        private static DateTime _lastRequest = new DateTime(); 
-
-        public async Task EchoAsync(Update update, CancellationToken cancellationToken)
+        public async Task EchoAsync(RequestUpdate update, CancellationToken cancellationToken)
         {
-            if (!update.Message.Text.Contains("camera1"))
+            if (string.IsNullOrEmpty(update.Message.Text) || !update.Message.Text.Contains("camera1"))
             {
                 return;
             }
@@ -75,8 +70,7 @@ namespace MotherGeo.Lilac.Telegram
                 await Task.Delay(500, cancellationToken);
             }
 
-            await Task.Delay(500, cancellationToken);
-            _lastRequest = DateTime.Now;
+            await Task.Delay(1500, cancellationToken);
 
             browser.ExecuteScriptAsync("$('.b-embed-logo').remove()");
             await Task.Delay(100, cancellationToken);
@@ -92,7 +86,7 @@ namespace MotherGeo.Lilac.Telegram
             screenshot.Save(memoryStream, ImageFormat.Png);
             memoryStream.Seek(0, SeekOrigin.Begin); 
             var photo = new InputOnlineFile(memoryStream);
-            await _botService.Client.SendPhotoAsync(update.Message.Chat.ID, photo, cancellationToken: cancellationToken, caption: $"{DateTime.Now:F}");
+            await _botService.Client.SendPhotoAsync(update.Message.Chat.Id, photo, cancellationToken: cancellationToken, caption: $"{DateTime.Now:F}");
         }
     }
 }

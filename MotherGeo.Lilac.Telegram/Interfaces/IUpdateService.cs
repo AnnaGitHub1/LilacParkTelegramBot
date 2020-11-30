@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using TelegramBot;
+using MotherGeo.Lilac.Telegram.Model;
 
 namespace MotherGeo.Lilac.Telegram.Interfaces
 {
     public interface IUpdateService
     {
-        Task EchoAsync(Update update, CancellationToken cancellationToken);
+        Task EchoAsync(RequestUpdate update, CancellationToken cancellationToken);
     }
 }
