@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
+        <Configurations>Debug</Configurations>
+        <Platforms>x64;x86</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+      <Prefer32bit>true</Prefer32bit>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CefSharp.WinForms" Version="86.0.241" />
+    </ItemGroup>
+
+</Project>
