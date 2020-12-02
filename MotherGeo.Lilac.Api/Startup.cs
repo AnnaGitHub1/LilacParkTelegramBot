@@ -23,8 +23,11 @@ namespace MotherGeo.Lilac.Telegram
         {
             services.AddSingleton<IBotService, BotService>();
             services.AddTransient<IUpdateService, UpdateService>();
+            services.AddTransient<ISaveService, SaveService>();
 
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
+            services.Configure<CameraUrlsConfiguration>(Configuration.GetSection("CameraUrls"));
+            services.Configure<PathForFotosConfiguration>(Configuration.GetSection("PathForFotos"));
 
             services.Configure<ApiBehaviorOptions>(opt =>
             {

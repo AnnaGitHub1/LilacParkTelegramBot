@@ -12,3 +12,5 @@ MotherGeo.Lilac.Telegram/obj/
 MotherGeo.Lilac.Api/GPUCache/
 MotherGeo.Lilac.WinFormsTest/bin/
 MotherGeo.Lilac.WinFormsTest/obj/
+/.vs
+/MotherGeo.Lilac.WinFormsTest
