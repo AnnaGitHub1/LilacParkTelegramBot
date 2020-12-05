@@ -14,3 +14,5 @@ MotherGeo.Lilac.WinFormsTest/bin/
 MotherGeo.Lilac.WinFormsTest/obj/
 /.vs
 /MotherGeo.Lilac.WinFormsTest
+/MotherGeo.Lilac.Api/.config
+/MotherGeo.Lilac.Api/Properties/PublishProfiles

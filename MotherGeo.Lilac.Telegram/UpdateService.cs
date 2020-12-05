@@ -14,20 +14,23 @@ namespace MotherGeo.Lilac.Telegram
 {
     public class UpdateService : IUpdateService
     {
-        private const string camera1Url = "https://open.ivideon.com/embed/v2/?server=100-gHmJOwS7jHDJLZm8nXlT3w&camera=458752&width=1280&height=720&lang=ru&fs=&noibw=";
-        private const string camera7Url =
-            "https://open.ivideon.com/embed/v2/?server=100-gHmJOwS7jHDJLZm8nXlT3w&camera=524288&width=1920&height=1080&lang=ru&fs=&noibw=";
-        
         private readonly IBotService _botService;
         private readonly BotConfiguration _settings;
+        private readonly CameraUrlsConfiguration _cameraConfig;
+        private readonly PathForFotosConfiguration _pathConfig;
 
         private static bool cefInitialized;
-        
-        public UpdateService(IBotService botService, IOptions<BotConfiguration> settings)
+
+        public UpdateService(IBotService botService, 
+            IOptions<BotConfiguration> settings, 
+            IOptions<CameraUrlsConfiguration> cameraConfig,
+             IOptions<PathForFotosConfiguration> path)
         {
             _botService = botService;
             _settings = settings.Value;
-            
+            _cameraConfig = cameraConfig.Value;
+            _pathConfig = path.Value;
+
             var cefSettings = new CefSettings
             {
                 //By default CefSharp will use an in-memory cache, you need to specify a Cache Folder to persist data
@@ -54,8 +57,8 @@ namespace MotherGeo.Lilac.Telegram
                 return;
             }
 
-            var url = update.Message.Text.Contains("camera1") ? camera1Url : camera7Url;
-            
+            var url = update.Message.Text.Contains("camera1") ? _cameraConfig.Camera1Url : _cameraConfig.Camera7Url;
+
             var browser = new ChromiumWebBrowser(url, new BrowserSettings
             {
                 FileAccessFromFileUrls = CefState.Enabled,
@@ -63,7 +66,7 @@ namespace MotherGeo.Lilac.Telegram
                 Javascript = CefState.Enabled,
                 ApplicationCache = CefState.Disabled
             });
-            
+
             while (browser.IsLoading)
             {
                 await Task.Delay(500, cancellationToken);
@@ -88,9 +91,56 @@ namespace MotherGeo.Lilac.Telegram
             }
             var memoryStream = new MemoryStream();
             screenshot.Save(memoryStream, ImageFormat.Png);
-            memoryStream.Seek(0, SeekOrigin.Begin); 
+            memoryStream.Seek(0, SeekOrigin.Begin);
             var photo = new InputOnlineFile(memoryStream);
             await _botService.Client.SendPhotoAsync(update.Message.Chat.Id, photo, cancellationToken: cancellationToken, caption: $"{DateTime.Now:F}");
+
+        }
+
+        public async Task SaveFoto(int number)
+        {
+            var url = number == 1 ? _cameraConfig.Camera1Url : _cameraConfig.Camera7Url;
+
+            var browser = new ChromiumWebBrowser(url, new BrowserSettings
+            {
+                FileAccessFromFileUrls = CefState.Enabled,
+                UniversalAccessFromFileUrls = CefState.Enabled,
+                Javascript = CefState.Enabled,
+                ApplicationCache = CefState.Disabled
+            });
+
+            while (browser.IsLoading)
+            {
+                await Task.Delay(500);
+            }
+
+            while (!browser.CanExecuteJavascriptInMainFrame)
+            {
+                await Task.Delay(500);
+            }
+
+            browser.ExecuteScriptAsync("$('.b-embed-logo').remove()");
+            await Task.Delay(100);
+            browser.ExecuteScriptAsync("$('.b-embed-btn-play-wrapper').remove()");
+            await Task.Delay(100);
+
+            var screenshot = await browser.ScreenshotAsync();
+            if (null == screenshot)
+            {
+                return;
+            }
+
+            using (MemoryStream memory = new MemoryStream())
+            {
+                using (FileStream fs = new FileStream($@"{_pathConfig.Path}{number}\\{DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss")}.png", FileMode.Create, FileAccess.ReadWrite))
+                {
+                    screenshot.Save(memory, ImageFormat.Png);
+                    byte[] bytes = memory.ToArray();
+                    fs.Write(bytes, 0, bytes.Length);
+                }
+            }
+
+
         }
     }
 }

@@ -13,20 +13,20 @@ namespace MotherGeo.Lilac.Telegram.Controllers
     [ApiController]
     public class SaveController : ControllerBase
     {
-        private ISaveService _saveService;
+        private readonly IUpdateService _updateService;
 
-        public SaveController(ISaveService saveService)
+        public SaveController(IUpdateService updateService)
         {
-            _saveService = saveService;
+            _updateService = updateService;
         }
 
         [Route("")]
         [HttpGet]
         public IActionResult SaveFotos()
         {
-            _saveService.SaveFoto(1);
+            _updateService.SaveFoto(1);
 
-            _saveService.SaveFoto(7);
+            _updateService.SaveFoto(7);
 
             return Ok();
         }
